@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .calculator {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: 320px;
+    }
+
+    .display {
+      background: #2d2d2d;
+      color: #fff;
+      padding: 20px;
+      font-size: 2rem;
+      text-align: right;
+      min-height: 60px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+    }
+
+    .buttons button {
+      font-size: 1.5rem;
+      padding: 20px;
+      border: none;
+      cursor: pointer;
+      background-color: #f4f4f4;
+      transition: background 0.2s ease;
+    }
+
+    .buttons button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .buttons .operator {
+      background-color: #ffd54f;
+    }
+
+    .buttons .equal {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .buttons .clear {
+      background-color: #e57373;
+      color: white;
+    }
+
+    .buttons .zero {
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <div class="display" id="display">0</div>
+  <div class="buttons">
+    <button class="clear" onclick="clearDisplay()">C</button>
+    <button class="operator" onclick="appendOperator('/')">÷</button>
+    <button class="operator" onclick="appendOperator('*')">×</button>
+    <button class="operator" onclick="appendOperator('-')">−</button>
+
+    <button onclick="appendNumber('7')">7</button>
+    <button onclick="appendNumber('8')">8</button>
+    <button onclick="appendNumber('9')">9</button>
+    <button class="operator" onclick="appendOperator('+')">+</button>
+
+    <button onclick="appendNumber('4')">4</button>
+    <button onclick="appendNumber('5')">5</button>
+    <button onclick="appendNumber('6')">6</button>
+    <button class="equal" onclick="calculate()">=</button>
+
+    <button onclick="appendNumber('1')">1</button>
+    <button onclick="appendNumber('2')">2</button>
+    <button onclick="appendNumber('3')">3</button>
+    <button onclick="appendDot()">.</button>
+
+    <button class="zero" onclick="appendNumber('0')">0</button>
+  </div>
+</div>
+
+<script>
+  let display = document.getElementById('display');
+  let currentInput = '0';
+
+  function updateDisplay() {
+    display.textContent = currentInput;
+  }
+
+  function appendNumber(num) {
+    if (currentInput === '0') {
+      currentInput = num;
+    } else {
+      currentInput += num;
+    }
+    updateDisplay();
+  }
+
+  function appendOperator(operator) {
+    if (/[\+\-\*\/]$/.test(currentInput)) {
+      currentInput = currentInput.slice(0, -1) + operator;
+    } else {
+      currentInput += operator;
+    }
+    updateDisplay();
+  }
+
+  function appendDot() {
+    const lastNumber = currentInput.split(/[\+\-\*\/]/).pop();
+    if (!lastNumber.includes('.')) {
+      currentInput += '.';
+    }
+    updateDisplay();
+  }
+
+  function clearDisplay() {
+    currentInput = '0';
+    updateDisplay();
+  }
+
+  function calculate() {
+    try {
+      currentInput = eval(currentInput).toString();
+    } catch (error) {
+      currentInput = 'Error';
+    }
+    updateDisplay();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const key = e.key;
+
+    if (!isNaN(key)) {
+      appendNumber(key);
+    } else if (['+', '-', '*', '/'].includes(key)) {
+      appendOperator(key);
+    } else if (key === '.') {
+      appendDot();
+    } else if (key === 'Enter' || key === '=') {
+      calculate();
+    } else if (key === 'Escape' || key === 'c') {
+      clearDisplay();
+    } else if (key === 'Backspace') {
+      currentInput = currentInput.slice(0, -1) || '0';
+      updateDisplay();
+    }
+  });
+</script>
+
+</body>
+</html>
